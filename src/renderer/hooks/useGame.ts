@@ -220,9 +220,10 @@ export function useGame(): UseGameReturn {
       setPendingDifficulty(null)
       setShowConfirm(true)
     } else {
-      void startNewGame(difficulty)
+      void startNewGame(pendingDifficulty ?? difficulty)
+      setPendingDifficulty(null)
     }
-  }, [hasProgress, difficulty, startNewGame])
+  }, [hasProgress, difficulty, pendingDifficulty, startNewGame])
 
   const confirmNewGame = useCallback(() => {
     setShowConfirm(false)
@@ -242,11 +243,9 @@ export function useGame(): UseGameReturn {
       if (hasProgress) {
         setPendingDifficulty(diff)
         setShowConfirm(true)
-      } else {
-        void startNewGame(diff)
       }
     },
-    [hasProgress, startNewGame],
+    [hasProgress],
   )
 
   const save = useCallback(async () => {

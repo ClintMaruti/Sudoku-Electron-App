@@ -11,7 +11,14 @@ let _store: { get(key: string): unknown; set(key: string, val: unknown): void } 
 async function getStore() {
   if (!_store) {
     const Store = (await import('electron-store')).default
-    _store = new Store()
+    const options: { name?: string; cwd?: string } = {}
+    if (process.env.NODE_ENV === 'test') {
+      options.name = 'sudoku-test'
+      if (process.env.E2E_STORE_PATH) {
+        options.cwd = process.env.E2E_STORE_PATH
+      }
+    }
+    _store = new Store(options)
   }
   return _store
 }

@@ -1,14 +1,22 @@
 import { _electron as electron, ElectronApplication, Page } from '@playwright/test'
+import fs from 'fs'
+import os from 'os'
 import path from 'path'
 
 export async function launchApp(): Promise<{ app: ElectronApplication; page: Page }> {
+  const storePath = fs.mkdtempSync(path.join(os.tmpdir(), 'sudoku-e2e-'))
   const app = await electron.launch({
     args: [path.join(process.cwd(), 'out/main/main.js')],
-    env: { ...process.env, NODE_ENV: 'test' },
+    env: { ...process.env, NODE_ENV: 'test', E2E_STORE_PATH: storePath },
+  })
+
+  app.on('close', () => {
+    fs.rmSync(storePath, { recursive: true, force: true })
   })
 
   const page = await app.firstWindow()
   await page.waitForLoadState('domcontentloaded')
+  await page.locator('[data-testid="sudoku-cell"]').first().waitFor({ state: 'visible' })
 
   return { app, page }
 }

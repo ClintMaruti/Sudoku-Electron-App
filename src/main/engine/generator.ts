@@ -68,27 +68,20 @@ function canPlace(board: Board, row: number, col: number, num: number): boolean 
 
 function removeClues(solution: Board, minRevealed: number, maxRevealed: number): Board {
   const board = solution.map((row) => [...row])
+  const cells = shuffle(Array.from({ length: 81 }, (_, i) => i))
 
-  for (let pass = 0; pass < 12; pass++) {
-    const before = countRevealed(board)
-    if (before <= maxRevealed) break
+  for (const idx of cells) {
+    if (countRevealed(board) <= maxRevealed) break
 
-    const cells = shuffle(Array.from({ length: 81 }, (_, i) => i))
-    for (const idx of cells) {
-      if (countRevealed(board) <= maxRevealed) break
+    const row = Math.floor(idx / 9)
+    const col = idx % 9
+    if (board[row][col] === 0) continue
 
-      const row = Math.floor(idx / 9)
-      const col = idx % 9
-      if (board[row][col] === 0) continue
-
-      const backup = board[row][col]
-      board[row][col] = 0
-      if (!hasUniqueSolution(board)) {
-        board[row][col] = backup
-      }
+    const backup = board[row][col]
+    board[row][col] = 0
+    if (!hasUniqueSolution(board)) {
+      board[row][col] = backup
     }
-
-    if (countRevealed(board) === before) break
   }
 
   restoreCluesToMinimum(board, solution, minRevealed)
@@ -137,12 +130,26 @@ function countSolutions(board: Board, limit = 2): number {
 }
 
 function findEmptyCell(board: Board): [number, number] | null {
+  let best: [number, number] | null = null
+  let bestOptions = 10
+
   for (let row = 0; row < 9; row++) {
     for (let col = 0; col < 9; col++) {
-      if (board[row][col] === 0) return [row, col]
+      if (board[row][col] !== 0) continue
+
+      let options = 0
+      for (let num = 1; num <= 9; num++) {
+        if (canPlace(board, row, col, num)) options++
+      }
+      if (options < bestOptions) {
+        bestOptions = options
+        best = [row, col]
+        if (options <= 1) return best
+      }
     }
   }
-  return null
+
+  return best
 }
 
 function shuffle<T>(arr: T[]): T[] {
