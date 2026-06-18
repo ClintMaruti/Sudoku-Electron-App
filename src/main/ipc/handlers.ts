@@ -18,6 +18,8 @@ async function getStore() {
 
 const SAVE_KEY = 'gameState'
 
+let activeGame: NewGameResponse | null = null
+
 // ---------------------------------------------------------------------------
 // IPC handlers — pure functions that can be called from tests without Electron
 // ---------------------------------------------------------------------------
@@ -27,7 +29,14 @@ export async function handleGameNew(difficulty: Difficulty): Promise<NewGameResp
   if (!valid.includes(difficulty)) {
     throw new Error(`Invalid difficulty: ${difficulty}`)
   }
-  return generateBoard(difficulty)
+  const result = generateBoard(difficulty)
+  activeGame = result
+  return result
+}
+
+/** Dev/test helper — returns the solution for the most recently generated game. */
+export async function handleGameDevGetSolution(): Promise<Board | null> {
+  return activeGame?.solution ?? null
 }
 
 export async function handleGameValidate(board: Board): Promise<ValidationResponse> {

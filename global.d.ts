@@ -8,6 +8,15 @@ declare global {
         validate: (board: Board) => Promise<ValidationResponse>
         save: (state: GameState) => Promise<void>
         load: () => Promise<GameState | null>
+        /** Present only when NODE_ENV=test — for E2E victory fixtures */
+        dev?: {
+          getSolution: () => Promise<Board | null>
+        }
+      }
+      menu: {
+        onNewGame: (callback: () => void) => () => void
+        onSave: (callback: () => void) => () => void
+        onLoad: (callback: () => void) => () => void
       }
     }
   }
