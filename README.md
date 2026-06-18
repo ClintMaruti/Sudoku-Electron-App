@@ -19,7 +19,7 @@ npm install
 npm run dev
 ```
 
-Starts the app in development mode with hot reload (Vite for renderer, tsc for main process).
+Starts Vite (renderer hot reload), TypeScript watch for the main process, and launches Electron against `http://localhost:5173`.
 
 ## Build
 

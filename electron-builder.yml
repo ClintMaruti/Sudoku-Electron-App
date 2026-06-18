@@ -1,11 +1,14 @@
 appId: com.clintmaruti.sudoku
 productName: Sudoku
+asar: true
+artifactName: ${productName}-${version}-${arch}.${ext}
 directories:
   output: release
 files:
   - out/**/*
   - dist/**/*
   - package.json
+  - "!**/*.map"
 mac:
   target:
     - target: dmg
