@@ -1,0 +1,46 @@
+{
+  "name": "sudoku-electron-app",
+  "version": "1.0.0",
+  "description": "A cross-platform Sudoku desktop app built with Electron, React, and TypeScript",
+  "main": "out/main/main.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:renderer\" \"npm run dev:main\"",
+    "dev:renderer": "vite",
+    "dev:main": "tsc -p tsconfig.main.json --watch",
+    "build": "npm run build:renderer && npm run build:main",
+    "build:renderer": "vite build",
+    "build:main": "tsc -p tsconfig.main.json",
+    "package": "npm run build && electron-builder",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test"
+  },
+  "keywords": ["sudoku", "electron", "react", "typescript"],
+  "author": "ClintMaruti",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.44.0",
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "concurrently": "^8.2.2",
+    "electron": "^31.0.1",
+    "electron-builder": "^24.13.3",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.12",
+    "vitest": "^1.6.0",
+    "@vitest/coverage-v8": "^1.6.0",
+    "playwright": "^1.44.0"
+  },
+  "dependencies": {
+    "electron-store": "^8.2.0",
+    "electron-window-state": "^5.0.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "build": {
+    "extends": "./electron-builder.yml"
+  }
+}

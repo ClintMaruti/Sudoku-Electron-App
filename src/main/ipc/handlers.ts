@@ -1,0 +1,47 @@
+import { generateBoard } from '../engine/generator'
+import { validateBoard } from '../engine/validator'
+import type { Board, Difficulty, GameState, NewGameResponse, ValidationResponse } from '../../../global'
+
+// ---------------------------------------------------------------------------
+// Persistence (lazy-loaded to avoid Electron import issues in tests)
+// ---------------------------------------------------------------------------
+
+let _store: { get(key: string): unknown; set(key: string, val: unknown): void } | null = null
+
+async function getStore() {
+  if (!_store) {
+    const Store = (await import('electron-store')).default
+    _store = new Store()
+  }
+  return _store
+}
+
+const SAVE_KEY = 'gameState'
+
+// ---------------------------------------------------------------------------
+// IPC handlers — pure functions that can be called from tests without Electron
+// ---------------------------------------------------------------------------
+
+export async function handleGameNew(difficulty: Difficulty): Promise<NewGameResponse> {
+  const valid: Difficulty[] = ['easy', 'medium', 'hard']
+  if (!valid.includes(difficulty)) {
+    throw new Error(`Invalid difficulty: ${difficulty}`)
+  }
+  return generateBoard(difficulty)
+}
+
+export async function handleGameValidate(board: Board): Promise<ValidationResponse> {
+  return validateBoard(board)
+}
+
+export async function handleGameSave(state: GameState): Promise<void> {
+  const store = await getStore()
+  store.set(SAVE_KEY, state)
+}
+
+export async function handleGameLoad(): Promise<GameState | null> {
+  const store = await getStore()
+  const saved = store.get(SAVE_KEY)
+  if (!saved) return null
+  return saved as GameState
+}

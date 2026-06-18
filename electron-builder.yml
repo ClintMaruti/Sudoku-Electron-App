@@ -1,0 +1,23 @@
+appId: com.clintmaruti.sudoku
+productName: Sudoku
+directories:
+  output: release
+files:
+  - out/**/*
+  - dist/**/*
+  - package.json
+mac:
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  category: public.app-category.games
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
